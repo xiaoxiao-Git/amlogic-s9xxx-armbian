@@ -1,0 +1,35 @@
+name: Build Armbian G12A-U200 2G
+on:
+  workflow_dispatch:
+    inputs:
+      set_release:
+        description: 系统版本
+        required: true
+        default: bookworm
+        type: choice
+        options:
+          - bookworm
+          - jammy
+      set_kernel:
+        description: 内核版本（推荐5.15.y）
+        required: true
+        default: 5.15.y
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@main
+
+      - name: Build Armbian
+        uses: ophub/amlogic-s9xxx-armbian@main
+        with:
+          build_target: armbian
+          armbian_release: ${{ github.event.inputs.set_release }}
+          armbian_board: s905x2
+          armbian_kernel: ${{ github.event.inputs.set_kernel }}
+          kernel_repo: ophub/kernel
+          armbian_fstype: ext4
+          uboot_name: u-boot-s905x2-s922
+          auto_kernel: true
+          share_log: true
